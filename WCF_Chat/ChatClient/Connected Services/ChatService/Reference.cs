@@ -15,67 +15,6 @@ namespace ChatClient.ChatService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ChatUser", Namespace="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities")]
-    [System.SerializableAttribute()]
-    public partial class ChatUser : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string UserNameField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((this.IdField.Equals(value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string UserName {
-            get {
-                return this.UserNameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UserNameField, value) != true)) {
-                    this.UserNameField = value;
-                    this.RaisePropertyChanged("UserName");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Message", Namespace="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities")]
     [System.SerializableAttribute()]
     public partial class Message : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
@@ -167,6 +106,67 @@ namespace ChatClient.ChatService {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ChatUser", Namespace="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities")]
+    [System.SerializableAttribute()]
+    public partial class ChatUser : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string UserNameField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Id {
+            get {
+                return this.IdField;
+            }
+            set {
+                if ((this.IdField.Equals(value) != true)) {
+                    this.IdField = value;
+                    this.RaisePropertyChanged("Id");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string UserName {
+            get {
+                return this.UserNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.UserNameField, value) != true)) {
+                    this.UserNameField = value;
+                    this.RaisePropertyChanged("UserName");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ChatService.IChatService", CallbackContract=typeof(ChatClient.ChatService.IChatServiceCallback))]
     public interface IChatService {
@@ -183,17 +183,35 @@ namespace ChatClient.ChatService {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/LogOff", ReplyAction="http://tempuri.org/IChatService/LogOffResponse")]
         System.Threading.Tasks.Task LogOffAsync(int id);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/FindUserByName", ReplyAction="http://tempuri.org/IChatService/FindUserByNameResponse")]
-        ChatClient.ChatService.ChatUser FindUserByName(string userName);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/FindUserByName", ReplyAction="http://tempuri.org/IChatService/FindUserByNameResponse")]
-        System.Threading.Tasks.Task<ChatClient.ChatService.ChatUser> FindUserByNameAsync(string userName);
-        
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatService/SendMessage")]
         void SendMessage(ChatClient.ChatService.Message message);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatService/SendMessage")]
         System.Threading.Tasks.Task SendMessageAsync(ChatClient.ChatService.Message message);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/AddToChatList", ReplyAction="http://tempuri.org/IChatService/AddToChatListResponse")]
+        ChatClient.ChatService.ChatUser AddToChatList(int forId, string userName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/AddToChatList", ReplyAction="http://tempuri.org/IChatService/AddToChatListResponse")]
+        System.Threading.Tasks.Task<ChatClient.ChatService.ChatUser> AddToChatListAsync(int forId, string userName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/DeleteFromChatList", ReplyAction="http://tempuri.org/IChatService/DeleteFromChatListResponse")]
+        int DeleteFromChatList(int forId, string userName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/DeleteFromChatList", ReplyAction="http://tempuri.org/IChatService/DeleteFromChatListResponse")]
+        System.Threading.Tasks.Task<int> DeleteFromChatListAsync(int forId, string userName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/GetMessagesHistory", ReplyAction="http://tempuri.org/IChatService/GetMessagesHistoryResponse")]
+        ChatClient.ChatService.Message[] GetMessagesHistory(int forId, int withId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/GetMessagesHistory", ReplyAction="http://tempuri.org/IChatService/GetMessagesHistoryResponse")]
+        System.Threading.Tasks.Task<ChatClient.ChatService.Message[]> GetMessagesHistoryAsync(int forId, int withId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/GetChatList", ReplyAction="http://tempuri.org/IChatService/GetChatListResponse")]
+        ChatClient.ChatService.ChatUser[] GetChatList(int forId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/GetChatList", ReplyAction="http://tempuri.org/IChatService/GetChatListResponse")]
+        System.Threading.Tasks.Task<ChatClient.ChatService.ChatUser[]> GetChatListAsync(int forId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -247,20 +265,44 @@ namespace ChatClient.ChatService {
             return base.Channel.LogOffAsync(id);
         }
         
-        public ChatClient.ChatService.ChatUser FindUserByName(string userName) {
-            return base.Channel.FindUserByName(userName);
-        }
-        
-        public System.Threading.Tasks.Task<ChatClient.ChatService.ChatUser> FindUserByNameAsync(string userName) {
-            return base.Channel.FindUserByNameAsync(userName);
-        }
-        
         public void SendMessage(ChatClient.ChatService.Message message) {
             base.Channel.SendMessage(message);
         }
         
         public System.Threading.Tasks.Task SendMessageAsync(ChatClient.ChatService.Message message) {
             return base.Channel.SendMessageAsync(message);
+        }
+        
+        public ChatClient.ChatService.ChatUser AddToChatList(int forId, string userName) {
+            return base.Channel.AddToChatList(forId, userName);
+        }
+        
+        public System.Threading.Tasks.Task<ChatClient.ChatService.ChatUser> AddToChatListAsync(int forId, string userName) {
+            return base.Channel.AddToChatListAsync(forId, userName);
+        }
+        
+        public int DeleteFromChatList(int forId, string userName) {
+            return base.Channel.DeleteFromChatList(forId, userName);
+        }
+        
+        public System.Threading.Tasks.Task<int> DeleteFromChatListAsync(int forId, string userName) {
+            return base.Channel.DeleteFromChatListAsync(forId, userName);
+        }
+        
+        public ChatClient.ChatService.Message[] GetMessagesHistory(int forId, int withId) {
+            return base.Channel.GetMessagesHistory(forId, withId);
+        }
+        
+        public System.Threading.Tasks.Task<ChatClient.ChatService.Message[]> GetMessagesHistoryAsync(int forId, int withId) {
+            return base.Channel.GetMessagesHistoryAsync(forId, withId);
+        }
+        
+        public ChatClient.ChatService.ChatUser[] GetChatList(int forId) {
+            return base.Channel.GetChatList(forId);
+        }
+        
+        public System.Threading.Tasks.Task<ChatClient.ChatService.ChatUser[]> GetChatListAsync(int forId) {
+            return base.Channel.GetChatListAsync(forId);
         }
     }
 }

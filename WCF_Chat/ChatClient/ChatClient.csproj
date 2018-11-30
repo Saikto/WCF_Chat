@@ -58,6 +58,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Exceptions\ServerDidNotRespondException.cs" />
+    <Compile Include="LoginValidator.cs" />
     <Compile Include="Utility\StorageHandler.cs" />
     <Page Include="LoginWindow.xaml">
       <SubType>Designer</SubType>
@@ -107,6 +108,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Connected Services\ChatService\ChatClient.ChatService.ChatUser.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ChatService\ChatClient.ChatService.Message.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Connected Services\ChatService\ChatService1.wsdl" />

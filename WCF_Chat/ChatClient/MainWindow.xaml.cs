@@ -15,7 +15,6 @@ namespace ChatClient
         private readonly LoginWindow _loginWindow;
         private readonly ClientService _clientService;
         private ChatUser _selectedChatContact;
-        private List<Message> _selectedChatContactMessageHistory;
         public List<ChatUser> ChatContactsList;
         
         private bool _showContactSearch = false;
@@ -31,26 +30,7 @@ namespace ChatClient
             HideSearch();
             ReloadContactList();
         }
-
-        private void _clientService_MessageReceived(Message message)
-        {
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart) delegate()
-            {
-                if (ChatContactsList.Find(u => u.Id == message.Sender.Id) == null)
-                {
-                    StorageHandler.AddChatContactToFile(_clientService.CurrentUser.Id, message.Sender.Id,
-                        message.Sender.UserName);
-                    StorageHandler.CreateMessagesHistoryFile(_clientService.CurrentUser.Id, message.Sender.Id);
-                    ReloadContactList();
-                }
-                StorageHandler.AddToMessagesHistoryFile(_clientService.CurrentUser.Id, message.Sender.Id, message);
-                if (_selectedChatContact != null && (message.Sender.Id == _selectedChatContact.Id))
-                {
-                    LoadMessageHistoryList(_selectedChatContact);
-                }
-            });
-        }
-
+        
         private void TbMessage_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && Keyboard.IsKeyDown(Key.LeftShift))
@@ -66,7 +46,7 @@ namespace ChatClient
 
         private void BtnSendMessage_Click(object sender, RoutedEventArgs e)
         {
-            if (_selectedChatContact != null)
+            if (_selectedChatContact != null && !string.IsNullOrEmpty(TbMessage.Text))
             {
                 Message message = new Message
                 {
@@ -76,8 +56,7 @@ namespace ChatClient
                     MessageText = TbMessage.Text
                 };
                 _clientService.SendMessage(message);
-                StorageHandler.AddToMessagesHistoryFile(_clientService.CurrentUser.Id, message.Receiver.Id, message);
-                LoadMessageHistoryList(_selectedChatContact);
+                ReloadMessageHistoryList(_selectedChatContact);
                 TbMessage.Text = string.Empty;
             }
         }
@@ -95,7 +74,7 @@ namespace ChatClient
         private void LbContactsList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             _selectedChatContact = GetSelectedChatUserFromContactsLb();
-            LoadMessageHistoryList(_selectedChatContact);
+            ReloadMessageHistoryList(_selectedChatContact);
         }
 
         private void BtnAddNew_Click(object sender, RoutedEventArgs e)
@@ -114,27 +93,23 @@ namespace ChatClient
 
         private void BtnTryAdd_Click(object sender, RoutedEventArgs e)
         {
-            var contactToAddName = TbFindContact.Text;
-            if (ChatContactsList.FirstOrDefault(u => u.UserName == contactToAddName) == null)
+            var contactToAdd = TbFindContact.Text;
+            if (ChatContactsList.FirstOrDefault(u => u.UserName == contactToAdd) == null)
             {
-                var contact = _clientService.FindContact(contactToAddName);
-                if (contact == null)
+                try
                 {
-                    MessageBox.Show("User with such username not found. Please try again.");
+                    _clientService.AddToChatList(contactToAdd);
+
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show(exception.Message);
                     return;
                 }
-                else
-                {
-                    StorageHandler.AddChatContactToFile(_clientService.CurrentUser.Id, contact.Id, contact.UserName);
-                    StorageHandler.CreateMessagesHistoryFile(_clientService.CurrentUser.Id, contact.Id);
-                    _selectedChatContact = new ChatUser()
-                    {
-                        Id = contact.Id,
-                        UserName = contact.UserName
-                    };
-                    ReloadContactList();
-                    LoadMessageHistoryList(_selectedChatContact);
-                }
+
+                _selectedChatContact = _clientService.ContactsMessageHistory.FirstOrDefault().Key;
+                ReloadContactList();
+                ReloadMessageHistoryList(_selectedChatContact);
             }
             TbMessage.Text = string.Empty;
             HideSearch();
@@ -146,9 +121,31 @@ namespace ChatClient
             ChatUser contactToDelete = _selectedChatContact;
             if (contactToDelete != null)
             {
-                StorageHandler.DeleteChatContactFromFile(_clientService.CurrentUser.Id, contactToDelete.UserName);
+                try
+                {
+                    _clientService.DeleteFromChatList(contactToDelete);
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show(exception.Message);
+                    return;
+                }
+                
+                LbChatMessages.Items.Clear();
                 ReloadContactList();
             }
+        }
+
+        private void _clientService_MessageReceived(Message message)
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                ReloadContactList();
+                if (_selectedChatContact != null && (message.Sender.UserName == _selectedChatContact.UserName))
+                {
+                    ReloadMessageHistoryList(message.Sender);
+                }
+            }).Wait(new TimeSpan(60000));
         }
 
         private ChatUser GetSelectedChatUserFromContactsLb()
@@ -160,6 +157,40 @@ namespace ChatClient
                 return chatUser;
             }
             return null;
+        }
+
+        private void ReloadContactList()
+        {
+            LbContactsList.Items.Clear();
+
+            ChatContactsList = _clientService.ContactsMessageHistory.Keys.ToList();
+
+            foreach (var contact in ChatContactsList)
+            {
+                LbContactsList.Items.Add(contact.UserName);
+            }
+        }
+
+        private void ReloadMessageHistoryList(ChatUser contact)
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart) delegate()
+            {
+                LbChatMessages.Items.Clear();
+                List<Message> messageHistory =
+                    _clientService.ContactsMessageHistory.FirstOrDefault(u => u.Key.Id == contact.Id).Value;
+
+                foreach (var message in messageHistory)
+                {
+                    string messageString = $"{message.SendTime.ToShortTimeString()} {message.Sender.UserName}:  {message.MessageText}";
+                    LbChatMessages.Items.Add(messageString);
+                }
+            });
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _clientService.DisconnectUser();
+            Environment.Exit(0);
         }
 
         private void HideSearch()
@@ -177,43 +208,6 @@ namespace ChatClient
             LblFindContact.Visibility = Visibility.Visible;
             TbFindContact.Visibility = Visibility.Visible;
             BtnTryAdd.Visibility = Visibility.Visible;
-        }
-
-        private void ReloadContactList()
-        {
-            LbContactsList.Items.Clear();
-
-            ChatContactsList = StorageHandler.GetContactsListFromFilesStorage(_clientService.CurrentUser.Id);
-
-            foreach (var contact in ChatContactsList)
-            {
-                LbContactsList.Items.Add(contact.UserName);
-            }
-        }
-
-        private void LoadMessageHistoryList(ChatUser contact)
-        {
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart) delegate()
-            {
-                LbChatMessages.Items.Clear();
-                if (_selectedChatContact != null)
-                {
-                    _selectedChatContactMessageHistory =
-                        StorageHandler.GetMessagesHistoryFile(_clientService.CurrentUser.Id, contact.Id);
-
-                    foreach (var message in _selectedChatContactMessageHistory)
-                    {
-                        string messageString = $"{message.SendTime.ToShortTimeString()} {message.Sender.UserName}:  {message.MessageText}";
-                        LbChatMessages.Items.Add(messageString);
-                    }
-                }
-            });
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            _clientService.DisconnectUser();
-            Environment.Exit(0);
         }
     }
 }

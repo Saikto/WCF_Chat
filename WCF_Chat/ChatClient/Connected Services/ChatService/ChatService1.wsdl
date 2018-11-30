@@ -48,14 +48,32 @@
   <wsdl:message name="IChatService_LogOff_OutputMessage">
     <wsdl:part name="parameters" element="tns:LogOffResponse" />
   </wsdl:message>
-  <wsdl:message name="IChatService_FindUserByName_InputMessage">
-    <wsdl:part name="parameters" element="tns:FindUserByName" />
-  </wsdl:message>
-  <wsdl:message name="IChatService_FindUserByName_OutputMessage">
-    <wsdl:part name="parameters" element="tns:FindUserByNameResponse" />
-  </wsdl:message>
   <wsdl:message name="IChatService_SendMessage_InputMessage">
     <wsdl:part name="parameters" element="tns:SendMessage" />
+  </wsdl:message>
+  <wsdl:message name="IChatService_AddToChatList_InputMessage">
+    <wsdl:part name="parameters" element="tns:AddToChatList" />
+  </wsdl:message>
+  <wsdl:message name="IChatService_AddToChatList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddToChatListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IChatService_DeleteFromChatList_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteFromChatList" />
+  </wsdl:message>
+  <wsdl:message name="IChatService_DeleteFromChatList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteFromChatListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IChatService_GetMessagesHistory_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMessagesHistory" />
+  </wsdl:message>
+  <wsdl:message name="IChatService_GetMessagesHistory_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMessagesHistoryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IChatService_GetChatList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetChatList" />
+  </wsdl:message>
+  <wsdl:message name="IChatService_GetChatList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetChatListResponse" />
   </wsdl:message>
   <wsdl:message name="IChatService_MessageCallback_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:MessageCallback" />
@@ -72,12 +90,24 @@
       <wsdl:input wsaw:Action="http://tempuri.org/IChatService/LogOff" message="tns:IChatService_LogOff_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IChatService/LogOffResponse" message="tns:IChatService_LogOff_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="FindUserByName">
-      <wsdl:input wsaw:Action="http://tempuri.org/IChatService/FindUserByName" message="tns:IChatService_FindUserByName_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/IChatService/FindUserByNameResponse" message="tns:IChatService_FindUserByName_OutputMessage" />
-    </wsdl:operation>
     <wsdl:operation name="SendMessage">
       <wsdl:input wsaw:Action="http://tempuri.org/IChatService/SendMessage" message="tns:IChatService_SendMessage_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AddToChatList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IChatService/AddToChatList" message="tns:IChatService_AddToChatList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IChatService/AddToChatListResponse" message="tns:IChatService_AddToChatList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteFromChatList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IChatService/DeleteFromChatList" message="tns:IChatService_DeleteFromChatList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IChatService/DeleteFromChatListResponse" message="tns:IChatService_DeleteFromChatList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMessagesHistory">
+      <wsdl:input wsaw:Action="http://tempuri.org/IChatService/GetMessagesHistory" message="tns:IChatService_GetMessagesHistory_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IChatService/GetMessagesHistoryResponse" message="tns:IChatService_GetMessagesHistory_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetChatList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IChatService/GetChatList" message="tns:IChatService_GetChatList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IChatService/GetChatListResponse" message="tns:IChatService_GetChatList_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="MessageCallback">
       <wsdl:output wsaw:Action="http://tempuri.org/IChatService/MessageCallback" message="tns:IChatService_MessageCallback_OutputCallbackMessage" />
@@ -105,8 +135,14 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="FindUserByName">
-      <soap12:operation soapAction="http://tempuri.org/IChatService/FindUserByName" style="document" />
+    <wsdl:operation name="SendMessage">
+      <soap12:operation soapAction="http://tempuri.org/IChatService/SendMessage" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="AddToChatList">
+      <soap12:operation soapAction="http://tempuri.org/IChatService/AddToChatList" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -114,11 +150,32 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="SendMessage">
-      <soap12:operation soapAction="http://tempuri.org/IChatService/SendMessage" style="document" />
+    <wsdl:operation name="DeleteFromChatList">
+      <soap12:operation soapAction="http://tempuri.org/IChatService/DeleteFromChatList" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMessagesHistory">
+      <soap12:operation soapAction="http://tempuri.org/IChatService/GetMessagesHistory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChatList">
+      <soap12:operation soapAction="http://tempuri.org/IChatService/GetChatList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="MessageCallback">
       <soap12:operation soapAction="http://tempuri.org/IChatService/MessageCallback" style="document" />

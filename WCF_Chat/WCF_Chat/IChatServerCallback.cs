@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System.Collections.Generic;
+using System.ServiceModel;
 using WCF_Chat.Entities;
 
 namespace WCF_Chat

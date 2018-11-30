@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System.Collections.Generic;
+using System.ServiceModel;
 using WCF_Chat.Entities;
 
 namespace WCF_Chat
@@ -12,10 +13,19 @@ namespace WCF_Chat
         [OperationContract]
         void LogOff(int id);
 
-        [OperationContract]
-        ChatUser FindUserByName(string userName);
-
         [OperationContract(IsOneWay = true)]
         void SendMessage(Message message);
+
+        [OperationContract]
+        ChatUser AddToChatList(int forId, string userName);
+
+        [OperationContract]
+        int DeleteFromChatList(int forId, string userName);
+
+        [OperationContract]
+        List<Message> GetMessagesHistory(int forId, int withId);
+
+        [OperationContract]
+        List<ChatUser> GetChatList(int forId);
     }
 }

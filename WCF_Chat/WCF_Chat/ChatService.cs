@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.ServiceModel;
 using System.Text;
@@ -15,10 +16,11 @@ namespace WCF_Chat
     {
         private readonly List<ChatUser> _onlineUsers = new List<ChatUser>();
         private readonly Dictionary<int, string> _registeredUsers;
+        private StorageHandler _storageHandler;
 
         ChatService()
         {
-            StorageHandler.GetAccountsDir();
+            _storageHandler = new StorageHandler();
             _registeredUsers = StorageHandler.GetRegisteredUsers();
         }
 
@@ -38,7 +40,12 @@ namespace WCF_Chat
                     UserName = userName,
                     OperationContext = OperationContext.Current
                 };
-                _onlineUsers.Add(userToConnect);
+
+                if (_onlineUsers.FirstOrDefault(u => u.Id == userToConnect.Id) == null)
+                {
+                    _onlineUsers.Add(userToConnect);
+                }
+
                 Console.WriteLine($"User {userName} is online now. Users online count: {_onlineUsers.Count}.");
                 return resultCode;
             }
@@ -56,21 +63,6 @@ namespace WCF_Chat
             }
         }
 
-        public ChatUser FindUserByName(string userName)
-        {
-            try
-            {
-                var found = _registeredUsers.First(c => c.Value == userName);
-                var id = found.Key;
-                return new ChatUser { Id = id, UserName = userName};
-            }
-            catch (InvalidOperationException)
-            {
-                return null;
-            }
-            
-        }
-
         public void SendMessage(Message message)
         {
             foreach (var user in _onlineUsers)
@@ -79,6 +71,9 @@ namespace WCF_Chat
                 {
                     try
                     {
+                        StorageHandler.AddChatContactToFile(message.Receiver.Id, message.Sender.Id, message.Sender.UserName);
+                        StorageHandler.AddToMessagesHistoryFile(message.Sender.Id, message.Receiver.Id, message);
+                        StorageHandler.AddToMessagesHistoryFile(message.Receiver.Id, message.Sender.Id, message);
                         user.OperationContext.GetCallbackChannel<IChatServerCallback>().MessageCallback(message);
                     }
                     catch (TimeoutException)
@@ -88,32 +83,73 @@ namespace WCF_Chat
             }
         }
 
-        private int ValidateUserLogin(string userName, string password)
+        public ChatUser AddToChatList(int forId, string userName)
         {
-            if (!StorageHandler.DoesUserExists(userName))
-                return -1;
+            ChatUser contact = FindUserByName(userName);
 
-            var passwordFile = StorageHandler.GetPasswordFile(userName);
-            
-            //bool passwordCorrect = byte.Equals(Encoding.UTF8.GetString(ComputeSha256Hash(password)), passwordHash);
-            bool passwordCorrect = Equals(File.ReadAllText(passwordFile.FullName), password);
-
-            if (passwordCorrect)
+            if (contact != null)
             {
-                return _registeredUsers.First(u => u.Value == userName).Key;
+                try
+                {
+                    StorageHandler.AddChatContactToFile(forId, contact.Id, contact.UserName);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
 
-            return 0; 
+            return contact;
+        }
+
+        public int DeleteFromChatList(int forId, string userName)
+        {
+            try
+            {
+                StorageHandler.DeleteChatContactFromFile(forId, userName);
+            }
+            catch (Exception)
+            {
+                return 0; // Error
+            }
+
+            return 1; // OK
+        }
+
+        public List<Message> GetMessagesHistory(int forId, int withId)
+        {
+            return StorageHandler.GetMessagesHistory(forId, withId);
+        }
+
+        public List<ChatUser> GetChatList(int forId)
+        {
+            return StorageHandler.GetContactsListFromFile(forId);
+        }
+
+        private ChatUser FindUserByName(string userName)
+        {
+            try
+            {
+                var found = _registeredUsers.First(c => c.Value == userName);
+                var id = found.Key;
+                return new ChatUser { Id = id, UserName = userName };
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
         }
 
         private int RegisterNewUser(string userName, string password)
         {
-            if (StorageHandler.DoesUserExists(userName))
+            if (StorageHandler.DoesUserNameExists(userName))
                 return -2;
 
-            StorageHandler.CreateUserDir(userName);
-            StorageHandler.CreateUserFiles(userName);
-            var passwordFile = StorageHandler.GetPasswordFile(userName);
+            int userId = StorageHandler.GenerateUserId();
+            _registeredUsers.Add(userId, userName);
+            StorageHandler.AddToRegisteredUsersFile(userId, userName);
+            StorageHandler.CreateUserFilesInStorage(userId);
+            var passwordFile = StorageHandler.GetPasswordFile(userId);
 
             File.AppendAllText(passwordFile.FullName, password);
             //using (var fStream = File.Create(userFilePath))
@@ -126,11 +162,29 @@ namespace WCF_Chat
 
             //    fStream.Flush();
             //}
-            int userId = StorageHandler.GenerateUserId();
-
-            _registeredUsers.Add(userId, userName);
-            StorageHandler.AddToRegisteredUsersFile(userId, userName);
             return userId;
+        }
+
+        private int ValidateUserLogin(string userName, string password)
+        {
+            if (!StorageHandler.DoesUserNameExists(userName))
+            {
+                return -1;
+            }
+
+            int userId = StorageHandler.GetUserIdByUserName(userName);
+
+            var passwordFile = StorageHandler.GetPasswordFile(userId);
+
+            //bool passwordCorrect = byte.Equals(Encoding.UTF8.GetString(ComputeSha256Hash(password)), passwordHash);
+            bool passwordCorrect = Equals(File.ReadAllText(passwordFile.FullName), password);
+
+            if (passwordCorrect)
+            {
+                return _registeredUsers.First(u => u.Value == userName).Key;
+            }
+
+            return 0;
         }
     }
 }
