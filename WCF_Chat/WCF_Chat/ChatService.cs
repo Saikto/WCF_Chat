@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Channels;
 using System.Security.Cryptography;
 using System.ServiceModel;
 using System.Text;
@@ -44,9 +45,11 @@ namespace WCF_Chat
                 if (_onlineUsersList.FirstOrDefault(u => u.Id == userToConnect.Id) == null)
                 {
                     _onlineUsersList.Add(userToConnect);
+                    userToConnect.OperationContext.Channel.Faulted += (sender, e) => LogOff(userToConnect.Id);
                 }
 
-                Console.WriteLine($"User {userName} is online now. Users online count: {_onlineUsersList.Count}.");
+                Console.WriteLine($"{DateTime.Now}: User {userName} online.");
+                Console.WriteLine($"{DateTime.Now}: Users online count: {_onlineUsersList.Count}.");
                 return resultCode;
             }
             return resultCode;
@@ -57,9 +60,9 @@ namespace WCF_Chat
             var userToDisconnect = _onlineUsersList.FirstOrDefault(u => u.Id == id);
             if (userToDisconnect != null)
             {
-                Console.WriteLine($"User {userToDisconnect.UserName} offline now.");
+                Console.WriteLine($"{DateTime.Now}: User {userToDisconnect.UserName} offline.");
                 _onlineUsersList.Remove(userToDisconnect);
-                Console.WriteLine($"Users online count: {_onlineUsersList.Count}.");
+                Console.WriteLine($"{DateTime.Now}: Users online count: {_onlineUsersList.Count}.");
             }
         }
 

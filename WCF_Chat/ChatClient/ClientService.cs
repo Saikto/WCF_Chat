@@ -29,7 +29,15 @@ namespace ChatClient
             _serverService = new ChatServiceClient(new InstanceContext(this));
             Thread t = new Thread(delegate()
             {
-                resultCode = _serverService.LogIn(userName, password, registrationRequired); 
+                try
+                {
+                    resultCode = _serverService.LogIn(userName, password, registrationRequired);
+                }
+                catch (EndpointNotFoundException)
+                {
+                    resultCode = -666;
+                }
+                 
             });
             t.Start();
             t.Join(60000);

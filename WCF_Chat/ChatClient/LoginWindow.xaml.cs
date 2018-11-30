@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ServiceModel;
 using System.Windows;
 using ChatClient.Exceptions;
 
@@ -51,8 +52,14 @@ namespace ChatClient
                 MessageBox.Show(ex.Message);
                 return;
             }
+            catch (ServerDidNotRespondException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
 
             MainWindow mainWindow = new MainWindow(_clientService, this);
+            mainWindow.Title += $" - {userName}";
             mainWindow.Show();
             Hide();
         }

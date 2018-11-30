@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ChatClient.ChatService;
-using ChatClient.Utility;
 
 namespace ChatClient
 {
@@ -75,7 +73,10 @@ namespace ChatClient
         private void LbContactsList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             _selectedChatContact = GetSelectedChatUserFromContactsLb();
-            ReloadMessageHistoryListForSelectedContact();
+            if (_selectedChatContact != null)
+            {
+                ReloadMessageHistoryListForSelectedContact();
+            }
         }
 
         private void BtnAddNew_Click(object sender, RoutedEventArgs e)
