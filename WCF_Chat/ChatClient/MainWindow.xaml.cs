@@ -131,7 +131,6 @@ namespace ChatClient
                     MessageBox.Show(exception.Message);
                     return;
                 }
-                //TODO
                 LbChatMessages.Items.Clear();
                 ReloadContactList();
             }
@@ -139,6 +138,11 @@ namespace ChatClient
 
         private void _clientService_MessageReceived(Message message)
         {
+            if (ChatContactsList.FirstOrDefault(u => u.Id == message.Sender.Id) == null)
+            {
+                Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart) ReloadContactList);
+            }
+
             if (_selectedChatContact != null && (message.Sender.UserName == _selectedChatContact.UserName))
             {
                 Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart) delegate()

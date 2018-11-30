@@ -284,7 +284,7 @@ namespace WCF_Chat.Utility
                 CreateMessagesHistoryFile(forUser.Id, contactToAdd.Id);
             }
 
-            if (!GetContactsList(forUser).Contains(contactToAdd))
+            if (GetContactsList(forUser).FirstOrDefault(u => u.Id == contactToAdd.Id) != null)
                 return;
 
             XElement contactsDoc = XElement.Load(contactsFile.FullName);
