@@ -2,7 +2,7 @@
 using System.ServiceModel;
 using WCF_Chat.Entities;
 
-namespace WCF_Chat
+namespace WCF_Chat.Interfaces
 {
     [ServiceContract(CallbackContract = typeof(IChatServerCallback))]
     public interface IChatService
@@ -17,15 +17,15 @@ namespace WCF_Chat
         void SendMessage(Message message);
 
         [OperationContract]
-        ClientUser AddToChatList(int forId, string userName);
+        ClientUser AddToChatList(ClientUser forUser, string contactUserName);
 
         [OperationContract]
-        int DeleteFromChatList(int forId, string userName);
+        int DeleteFromChatList(ClientUser forUser, string contactUserName);
 
         [OperationContract]
-        List<Message> GetMessagesHistory(int forId, int withId);
+        List<Message> GetMessagesHistory(ClientUser forUser, ClientUser withUser);
 
         [OperationContract]
-        List<ClientUser> GetChatList(int forId);
+        List<ClientUser> GetChatList(ClientUser forUser);
     }
 }

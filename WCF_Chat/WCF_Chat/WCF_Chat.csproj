@@ -50,11 +50,12 @@
     <Compile Include="Exceptions\UserAlreadyExistException.cs" />
     <Compile Include="Exceptions\UserNotRegisteredException.cs" />
     <Compile Include="Exceptions\WrongUserPasswordException.cs" />
-    <Compile Include="IChatServerCallback.cs" />
-    <Compile Include="IChatService.cs" />
+    <Compile Include="Interfaces\IChatServerCallback.cs" />
+    <Compile Include="Interfaces\IChatService.cs" />
+    <Compile Include="Interfaces\IStorageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\ServerUser.cs" />
-    <Compile Include="Utility\StorageHandler.cs" />
+    <Compile Include="Utility\FileStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

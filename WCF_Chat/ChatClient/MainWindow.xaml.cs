@@ -110,9 +110,7 @@ namespace ChatClient
                     return;
                 }
 
-                //_selectedChatContact = _clientService.ContactsMessageHistory.FirstOrDefault().Key;
                 ReloadContactList();
-                //ReloadMessageHistoryListForSelectedContact();
             }
             TbMessage.Text = string.Empty;
             HideSearch();
@@ -141,11 +139,6 @@ namespace ChatClient
 
         private void _clientService_MessageReceived(Message message)
         {
-            //if (ChatContactsList.FirstOrDefault(u => u.UserName == message.Sender.UserName) == null)
-            //{
-            //    Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart) delegate() { ReloadContactList(); });
-            //}
-
             if (_selectedChatContact != null && (message.Sender.UserName == _selectedChatContact.UserName))
             {
                 Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart) delegate()

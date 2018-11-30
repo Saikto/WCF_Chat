@@ -57,8 +57,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="LoginValidator.cs" />
-    <Compile Include="Utility\StorageHandler.cs" />
+    <Compile Include="Utility\LoginValidator.cs" />
     <Page Include="LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

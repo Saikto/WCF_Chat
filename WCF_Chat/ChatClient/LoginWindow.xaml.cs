@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ServiceModel;
 using System.Windows;
+using ChatClient.Utility;
 
 namespace ChatClient
 {
@@ -39,8 +40,8 @@ namespace ChatClient
                 _clientService.FaultExceptionThrown -= FaultExceptionOccured;
                 return;
             }
-            //StorageHandler.GetOrCreateUserDir(_clientService.CurrentUser.Id);
 
+            //Creates main window instance and shows it
             MainWindow mainWindow = new MainWindow(_clientService, this);
             mainWindow.Title += $" - {userName}";
             mainWindow.Show();

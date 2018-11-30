@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ChatClient.Exceptions
+namespace WCF_Chat.Exceptions
 {
     public class UserNotRegisteredException : Exception
     {

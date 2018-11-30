@@ -190,28 +190,28 @@ namespace ChatClient.ChatService {
         System.Threading.Tasks.Task SendMessageAsync(ChatClient.ChatService.Message message);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/AddToChatList", ReplyAction="http://tempuri.org/IChatService/AddToChatListResponse")]
-        ChatClient.ChatService.ClientUser AddToChatList(int forId, string userName);
+        ChatClient.ChatService.ClientUser AddToChatList(ChatClient.ChatService.ClientUser forUser, string contactUserName);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/AddToChatList", ReplyAction="http://tempuri.org/IChatService/AddToChatListResponse")]
-        System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser> AddToChatListAsync(int forId, string userName);
+        System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser> AddToChatListAsync(ChatClient.ChatService.ClientUser forUser, string contactUserName);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/DeleteFromChatList", ReplyAction="http://tempuri.org/IChatService/DeleteFromChatListResponse")]
-        int DeleteFromChatList(int forId, string userName);
+        int DeleteFromChatList(ChatClient.ChatService.ClientUser forUser, string contactUserName);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/DeleteFromChatList", ReplyAction="http://tempuri.org/IChatService/DeleteFromChatListResponse")]
-        System.Threading.Tasks.Task<int> DeleteFromChatListAsync(int forId, string userName);
+        System.Threading.Tasks.Task<int> DeleteFromChatListAsync(ChatClient.ChatService.ClientUser forUser, string contactUserName);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/GetMessagesHistory", ReplyAction="http://tempuri.org/IChatService/GetMessagesHistoryResponse")]
-        ChatClient.ChatService.Message[] GetMessagesHistory(int forId, int withId);
+        ChatClient.ChatService.Message[] GetMessagesHistory(ChatClient.ChatService.ClientUser forUser, ChatClient.ChatService.ClientUser withUser);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/GetMessagesHistory", ReplyAction="http://tempuri.org/IChatService/GetMessagesHistoryResponse")]
-        System.Threading.Tasks.Task<ChatClient.ChatService.Message[]> GetMessagesHistoryAsync(int forId, int withId);
+        System.Threading.Tasks.Task<ChatClient.ChatService.Message[]> GetMessagesHistoryAsync(ChatClient.ChatService.ClientUser forUser, ChatClient.ChatService.ClientUser withUser);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/GetChatList", ReplyAction="http://tempuri.org/IChatService/GetChatListResponse")]
-        ChatClient.ChatService.ClientUser[] GetChatList(int forId);
+        ChatClient.ChatService.ClientUser[] GetChatList(ChatClient.ChatService.ClientUser forUser);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/GetChatList", ReplyAction="http://tempuri.org/IChatService/GetChatListResponse")]
-        System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser[]> GetChatListAsync(int forId);
+        System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser[]> GetChatListAsync(ChatClient.ChatService.ClientUser forUser);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -273,36 +273,36 @@ namespace ChatClient.ChatService {
             return base.Channel.SendMessageAsync(message);
         }
         
-        public ChatClient.ChatService.ClientUser AddToChatList(int forId, string userName) {
-            return base.Channel.AddToChatList(forId, userName);
+        public ChatClient.ChatService.ClientUser AddToChatList(ChatClient.ChatService.ClientUser forUser, string contactUserName) {
+            return base.Channel.AddToChatList(forUser, contactUserName);
         }
         
-        public System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser> AddToChatListAsync(int forId, string userName) {
-            return base.Channel.AddToChatListAsync(forId, userName);
+        public System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser> AddToChatListAsync(ChatClient.ChatService.ClientUser forUser, string contactUserName) {
+            return base.Channel.AddToChatListAsync(forUser, contactUserName);
         }
         
-        public int DeleteFromChatList(int forId, string userName) {
-            return base.Channel.DeleteFromChatList(forId, userName);
+        public int DeleteFromChatList(ChatClient.ChatService.ClientUser forUser, string contactUserName) {
+            return base.Channel.DeleteFromChatList(forUser, contactUserName);
         }
         
-        public System.Threading.Tasks.Task<int> DeleteFromChatListAsync(int forId, string userName) {
-            return base.Channel.DeleteFromChatListAsync(forId, userName);
+        public System.Threading.Tasks.Task<int> DeleteFromChatListAsync(ChatClient.ChatService.ClientUser forUser, string contactUserName) {
+            return base.Channel.DeleteFromChatListAsync(forUser, contactUserName);
         }
         
-        public ChatClient.ChatService.Message[] GetMessagesHistory(int forId, int withId) {
-            return base.Channel.GetMessagesHistory(forId, withId);
+        public ChatClient.ChatService.Message[] GetMessagesHistory(ChatClient.ChatService.ClientUser forUser, ChatClient.ChatService.ClientUser withUser) {
+            return base.Channel.GetMessagesHistory(forUser, withUser);
         }
         
-        public System.Threading.Tasks.Task<ChatClient.ChatService.Message[]> GetMessagesHistoryAsync(int forId, int withId) {
-            return base.Channel.GetMessagesHistoryAsync(forId, withId);
+        public System.Threading.Tasks.Task<ChatClient.ChatService.Message[]> GetMessagesHistoryAsync(ChatClient.ChatService.ClientUser forUser, ChatClient.ChatService.ClientUser withUser) {
+            return base.Channel.GetMessagesHistoryAsync(forUser, withUser);
         }
         
-        public ChatClient.ChatService.ClientUser[] GetChatList(int forId) {
-            return base.Channel.GetChatList(forId);
+        public ChatClient.ChatService.ClientUser[] GetChatList(ChatClient.ChatService.ClientUser forUser) {
+            return base.Channel.GetChatList(forUser);
         }
         
-        public System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser[]> GetChatListAsync(int forId) {
-            return base.Channel.GetChatListAsync(forId);
+        public System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser[]> GetChatListAsync(ChatClient.ChatService.ClientUser forUser) {
+            return base.Channel.GetChatListAsync(forUser);
         }
     }
 }

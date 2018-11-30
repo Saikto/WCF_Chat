@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
-using System.Windows.Documents;
 using ChatClient.ChatService;
-using ChatClient.Utility;
 
 namespace ChatClient
 {
@@ -23,7 +21,6 @@ namespace ChatClient
 
         public ClientService()
         {
-            StorageHandler.GetOrCreateAccountsDir();
         }
 
         public void ConnectUser(string userName, string password, bool registrationRequired)
@@ -51,7 +48,7 @@ namespace ChatClient
 
             if (CurrentUser != null)
             {
-                ContactsMessageHistory = GetAllMessageHistoryFromServer();
+                ContactsMessageHistory = GetFullMessageHistory();
             }
         }
 
@@ -75,19 +72,19 @@ namespace ChatClient
             ClientUser user;
             try
             {
-                user = _serverService.AddToChatList(CurrentUser.Id, contactToAdd);
+                user = _serverService.AddToChatList(CurrentUser, contactToAdd);
             }
             catch (FaultException e)
             {
                 throw new FaultException(e.Message);
             }
 
-            ContactsMessageHistory.Add(user, _serverService.GetMessagesHistory(CurrentUser.Id, user.Id).ToList());
+            ContactsMessageHistory.Add(user, _serverService.GetMessagesHistory(CurrentUser, user).ToList());
         }
 
         public void DeleteFromChatList(ClientUser contactDelete)
         {
-            int resultCode = _serverService.DeleteFromChatList(CurrentUser.Id, contactDelete.UserName);
+            int resultCode = _serverService.DeleteFromChatList(CurrentUser, contactDelete.UserName);
             switch (resultCode)
             {
                 case 0:
@@ -116,15 +113,15 @@ namespace ChatClient
             }
         }
 
-        private Dictionary<ClientUser, List<Message>> GetAllMessageHistoryFromServer()
+        private Dictionary<ClientUser, List<Message>> GetFullMessageHistory()
         {
             Dictionary<ClientUser, List<Message>> messageHistoryDict = new Dictionary<ClientUser, List<Message>>();
-            List<ClientUser> contactsList = _serverService.GetChatList(CurrentUser.Id).ToList();
+            List<ClientUser> contactsList = _serverService.GetChatList(CurrentUser).ToList();
 
             foreach (var contact in contactsList)
             {
                 List<Message> messageHistory =
-                    _serverService.GetMessagesHistory(CurrentUser.Id, contact.Id).ToList();
+                    _serverService.GetMessagesHistory(CurrentUser, contact).ToList();
                 messageHistoryDict.Add(contact, messageHistory);
             }
 
