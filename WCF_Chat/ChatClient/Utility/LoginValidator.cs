@@ -27,9 +27,9 @@ namespace ChatClient.Utility
         {
             Regex exp = new Regex(@"^[a-zA-Z0-9А-яЁё_\.]+$");
 
-            if (userName.Length < 1)
-                throw new ArgumentException("User name is too short. It has to contain at least one symbol.");
-            if (userName.Length >= 20)
+            if (userName.Length <= 1)
+                throw new ArgumentException("User name is too short. It has to contain at least two symbols.");
+            if (userName.Length > 20)
                 throw new ArgumentException("User name is too long. It can't contain more than 20 symbols.");
             if (!exp.IsMatch(userName))
                 throw new ArgumentException("User name contains restricted symbols. It can contain only numbers, symbols of Russian/English alphabet and symbols '_' and '.'");
@@ -40,7 +40,7 @@ namespace ChatClient.Utility
         {
             if (password.Length < 8)
                 throw new ArgumentException("Password is too short. It has to contain at least 8 symbols.");
-            if (password.Length >= 30)
+            if (password.Length > 30)
                 throw new ArgumentException("Password is too long. It can't contain more than 30 symbols.");
         }
     }
