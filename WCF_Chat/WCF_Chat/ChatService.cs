@@ -14,7 +14,7 @@ namespace WCF_Chat
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class ChatService : IChatService
     {
-        private readonly List<ChatUser> _onlineUsers = new List<ChatUser>();
+        private readonly List<ChatUser> _onlineUsersList = new List<ChatUser>();
         private readonly Dictionary<int, string> _registeredUsers;
         private StorageHandler _storageHandler;
 
@@ -41,12 +41,12 @@ namespace WCF_Chat
                     OperationContext = OperationContext.Current
                 };
 
-                if (_onlineUsers.FirstOrDefault(u => u.Id == userToConnect.Id) == null)
+                if (_onlineUsersList.FirstOrDefault(u => u.Id == userToConnect.Id) == null)
                 {
-                    _onlineUsers.Add(userToConnect);
+                    _onlineUsersList.Add(userToConnect);
                 }
 
-                Console.WriteLine($"User {userName} is online now. Users online count: {_onlineUsers.Count}.");
+                Console.WriteLine($"User {userName} is online now. Users online count: {_onlineUsersList.Count}.");
                 return resultCode;
             }
             return resultCode;
@@ -54,33 +54,39 @@ namespace WCF_Chat
 
         public void LogOff(int id)
         {
-            var userToDisconnect = _onlineUsers.FirstOrDefault(u => u.Id == id);
+            var userToDisconnect = _onlineUsersList.FirstOrDefault(u => u.Id == id);
             if (userToDisconnect != null)
             {
                 Console.WriteLine($"User {userToDisconnect.UserName} offline now.");
-                _onlineUsers.Remove(userToDisconnect);
-                Console.WriteLine($"Users online count: {_onlineUsers.Count}.");
+                _onlineUsersList.Remove(userToDisconnect);
+                Console.WriteLine($"Users online count: {_onlineUsersList.Count}.");
             }
         }
 
         public void SendMessage(Message message)
         {
-            foreach (var user in _onlineUsers)
+            foreach (var user in _registeredUsers)
             {
-                if (user.Id.Equals(message.Receiver.Id))
+                if (user.Key.Equals(message.Receiver.Id))
                 {
                     try
                     {
                         StorageHandler.AddChatContactToFile(message.Receiver.Id, message.Sender.Id, message.Sender.UserName);
                         StorageHandler.AddToMessagesHistoryFile(message.Sender.Id, message.Receiver.Id, message);
                         StorageHandler.AddToMessagesHistoryFile(message.Receiver.Id, message.Sender.Id, message);
-                        user.OperationContext.GetCallbackChannel<IChatServerCallback>().MessageCallback(message);
                     }
-                    catch (TimeoutException)
+                    catch (Exception)
                     {
                     }
                 }
             }
+
+            var onlineUser = _onlineUsersList.FirstOrDefault(u => u.Id == message.Receiver.Id);
+            if (onlineUser != null)
+            {
+                onlineUser.OperationContext.GetCallbackChannel<IChatServerCallback>().MessageCallback(message);
+            }
+            
         }
 
         public ChatUser AddToChatList(int forId, string userName)

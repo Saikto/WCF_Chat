@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -56,7 +57,7 @@ namespace ChatClient
                     MessageText = TbMessage.Text
                 };
                 _clientService.SendMessage(message);
-                ReloadMessageHistoryList(_selectedChatContact);
+                ReloadMessageHistoryListForSelectedContact();
                 TbMessage.Text = string.Empty;
             }
         }
@@ -74,7 +75,7 @@ namespace ChatClient
         private void LbContactsList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             _selectedChatContact = GetSelectedChatUserFromContactsLb();
-            ReloadMessageHistoryList(_selectedChatContact);
+            ReloadMessageHistoryListForSelectedContact();
         }
 
         private void BtnAddNew_Click(object sender, RoutedEventArgs e)
@@ -107,9 +108,9 @@ namespace ChatClient
                     return;
                 }
 
-                _selectedChatContact = _clientService.ContactsMessageHistory.FirstOrDefault().Key;
+                //_selectedChatContact = _clientService.ContactsMessageHistory.FirstOrDefault().Key;
                 ReloadContactList();
-                ReloadMessageHistoryList(_selectedChatContact);
+                //ReloadMessageHistoryListForSelectedContact();
             }
             TbMessage.Text = string.Empty;
             HideSearch();
@@ -130,7 +131,7 @@ namespace ChatClient
                     MessageBox.Show(exception.Message);
                     return;
                 }
-                
+                //TODO
                 LbChatMessages.Items.Clear();
                 ReloadContactList();
             }
@@ -138,14 +139,22 @@ namespace ChatClient
 
         private void _clientService_MessageReceived(Message message)
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            //if (ChatContactsList.FirstOrDefault(u => u.UserName == message.Sender.UserName) == null)
+            //{
+            //    Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart) delegate() { ReloadContactList(); });
+            //}
+
+            if (_selectedChatContact != null && (message.Sender.UserName == _selectedChatContact.UserName))
             {
-                ReloadContactList();
-                if (_selectedChatContact != null && (message.Sender.UserName == _selectedChatContact.UserName))
+                Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart) delegate()
                 {
-                    ReloadMessageHistoryList(message.Sender);
-                }
-            }).Wait(new TimeSpan(60000));
+                    string messageString =
+                        $"{message.SendTime.ToShortTimeString()} {message.Sender.UserName}:  {message.MessageText}";
+                    LbChatMessages.Items.Add(messageString);
+                    LbChatMessages.Items.MoveCurrentToLast();
+                    LbChatMessages.ScrollIntoView(LbChatMessages.Items.CurrentItem);
+                });
+            }
         }
 
         private ChatUser GetSelectedChatUserFromContactsLb()
@@ -171,19 +180,23 @@ namespace ChatClient
             }
         }
 
-        private void ReloadMessageHistoryList(ChatUser contact)
+        private void ReloadMessageHistoryListForSelectedContact()
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart) delegate()
+            Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart) delegate()
             {
                 LbChatMessages.Items.Clear();
                 List<Message> messageHistory =
-                    _clientService.ContactsMessageHistory.FirstOrDefault(u => u.Key.Id == contact.Id).Value;
+                    _clientService.ContactsMessageHistory.FirstOrDefault(u => u.Key.Id == _selectedChatContact.Id)
+                        .Value;
 
                 foreach (var message in messageHistory)
                 {
-                    string messageString = $"{message.SendTime.ToShortTimeString()} {message.Sender.UserName}:  {message.MessageText}";
+                    string messageString =
+                        $"{message.SendTime.ToShortTimeString()} {message.Sender.UserName}:  {message.MessageText}";
                     LbChatMessages.Items.Add(messageString);
                 }
+                LbChatMessages.Items.MoveCurrentToLast();
+                LbChatMessages.ScrollIntoView(LbChatMessages.Items.CurrentItem);
             });
         }
 

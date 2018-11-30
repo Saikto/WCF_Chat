@@ -49,7 +49,7 @@
     <Compile Include="IChatServerCallback.cs" />
     <Compile Include="IChatService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Entities\ServerUser.cs" />
+    <Compile Include="Entities\ChatUser.cs" />
     <Compile Include="Utility\StorageHandler.cs" />
   </ItemGroup>
   <ItemGroup>
