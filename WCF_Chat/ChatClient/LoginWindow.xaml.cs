@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ServiceModel;
 using System.Windows;
-using ChatClient.Exceptions;
 
 namespace ChatClient
 {
@@ -32,36 +31,25 @@ namespace ChatClient
             }
 
             //Connects user if everything is OK
-            try
+            _clientService.FaultExceptionThrown += FaultExceptionOccured;
+            _clientService.ConnectUser(userName, password, registrationRequired);
+
+            if (_clientService.CurrentUser == null)
             {
-                _clientService.ConnectUser(userName, password, registrationRequired);
-                //StorageHandler.GetOrCreateUserDir(_clientService.CurrentUser.Id);
-            }
-            catch (WrongUserPasswordException ex)
-            {
-                MessageBox.Show(ex.Message);
+                _clientService.FaultExceptionThrown -= FaultExceptionOccured;
                 return;
             }
-            catch (UserNotRegisteredException ex)
-            {
-                MessageBox.Show(ex.Message);
-                return;
-            }
-            catch (UserAlreadyExistException ex)
-            {
-                MessageBox.Show(ex.Message);
-                return;
-            }
-            catch (ServerDidNotRespondException ex)
-            {
-                MessageBox.Show(ex.Message);
-                return;
-            }
+            //StorageHandler.GetOrCreateUserDir(_clientService.CurrentUser.Id);
 
             MainWindow mainWindow = new MainWindow(_clientService, this);
             mainWindow.Title += $" - {userName}";
             mainWindow.Show();
             Hide();
+        }
+
+        private void FaultExceptionOccured(FaultException ex)
+        {
+            MessageBox.Show(ex.Message);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

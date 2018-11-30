@@ -13,7 +13,7 @@
   <xs:element name="LogInResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="LogInResult" type="xs:int" />
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" minOccurs="0" name="LogInResult" nillable="true" type="q1:ClientUser" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -32,7 +32,7 @@
   <xs:element name="SendMessage">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" minOccurs="0" name="message" nillable="true" type="q1:Message" />
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" minOccurs="0" name="message" nillable="true" type="q2:Message" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -47,7 +47,7 @@
   <xs:element name="AddToChatListResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" minOccurs="0" name="AddToChatListResult" nillable="true" type="q2:ChatUser" />
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" minOccurs="0" name="AddToChatListResult" nillable="true" type="q3:ClientUser" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -77,7 +77,7 @@
   <xs:element name="GetMessagesHistoryResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" minOccurs="0" name="GetMessagesHistoryResult" nillable="true" type="q3:ArrayOfMessage" />
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" minOccurs="0" name="GetMessagesHistoryResult" nillable="true" type="q4:ArrayOfMessage" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -91,14 +91,14 @@
   <xs:element name="GetChatListResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" minOccurs="0" name="GetChatListResult" nillable="true" type="q4:ArrayOfChatUser" />
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" minOccurs="0" name="GetChatListResult" nillable="true" type="q5:ArrayOfClientUser" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="MessageCallback">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" minOccurs="0" name="message" nillable="true" type="q5:Message" />
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" minOccurs="0" name="message" nillable="true" type="q6:Message" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

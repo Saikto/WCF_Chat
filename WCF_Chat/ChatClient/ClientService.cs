@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using System.Windows.Documents;
 using ChatClient.ChatService;
-using ChatClient.Exceptions;
 using ChatClient.Utility;
 
 namespace ChatClient
@@ -12,11 +12,14 @@ namespace ChatClient
     public class ClientService: IChatServiceCallback
     {
         private ChatServiceClient _serverService;
-        public ChatUser CurrentUser;
-        public Dictionary<ChatUser, List<Message>> ContactsMessageHistory;
+        public ClientUser CurrentUser;
+        public Dictionary<ClientUser, List<Message>> ContactsMessageHistory;
 
         public delegate void MessageReceivedHandler(Message message);
         public event MessageReceivedHandler MessageReceived;
+
+        public delegate void FaultExceptionHandler(FaultException ex);
+        public event FaultExceptionHandler FaultExceptionThrown;
 
         public ClientService()
         {
@@ -25,39 +28,30 @@ namespace ChatClient
 
         public void ConnectUser(string userName, string password, bool registrationRequired)
         {
-            int resultCode = -666;
             _serverService = new ChatServiceClient(new InstanceContext(this));
+
             Thread t = new Thread(delegate()
             {
                 try
                 {
-                    resultCode = _serverService.LogIn(userName, password, registrationRequired);
+                    CurrentUser = _serverService.LogIn(userName, password, registrationRequired);
                 }
                 catch (EndpointNotFoundException)
                 {
-                    resultCode = -666;
+                    FaultExceptionThrown?.Invoke(new FaultException("Sorry, server did not respond. Try again later."));
                 }
-                 
+                catch (FaultException e)
+                {
+                    FaultExceptionThrown?.Invoke(new FaultException(e.Message));
+                }
+
             });
             t.Start();
             t.Join(60000);
 
-            if (resultCode > 0)
+            if (CurrentUser != null)
             {
-                CurrentUser = new ChatUser { Id = resultCode, UserName = userName };
                 ContactsMessageHistory = GetAllMessageHistoryFromServer();
-            }
-
-            switch (resultCode)
-            {
-                case 0:
-                    throw new WrongUserPasswordException($"You entered wrong password for account with user name '{userName}'. Please try again.");
-                case -1:
-                    throw new UserNotRegisteredException($"Account with user name '{userName}' is not registered. Please check if you entered correct user name for your account or choose option 'Registration required' to create new account.");
-                case -2:
-                    throw new UserAlreadyExistException($"Account with user name '{userName}' already exists. Please enter another user name and try again.");
-                case -666:
-                    throw new ServerDidNotRespondException("Sorry, server did not respond. Try again later.");
             }
         }
 
@@ -78,19 +72,20 @@ namespace ChatClient
 
         public void AddToChatList(string contactToAdd)
         {
-            ChatUser user = _serverService.AddToChatList(CurrentUser.Id, contactToAdd);
-            if (user != null)
+            ClientUser user;
+            try
             {
-                ContactsMessageHistory.Add(user, _serverService.GetMessagesHistory(CurrentUser.Id, user.Id).ToList());
+                user = _serverService.AddToChatList(CurrentUser.Id, contactToAdd);
             }
-            else
+            catch (FaultException e)
             {
-                throw new UserNotRegisteredException(
-                    $"Account with user name '{contactToAdd}' is not registered. Please try again.");
+                throw new FaultException(e.Message);
             }
+
+            ContactsMessageHistory.Add(user, _serverService.GetMessagesHistory(CurrentUser.Id, user.Id).ToList());
         }
 
-        public void DeleteFromChatList(ChatUser contactDelete)
+        public void DeleteFromChatList(ClientUser contactDelete)
         {
             int resultCode = _serverService.DeleteFromChatList(CurrentUser.Id, contactDelete.UserName);
             switch (resultCode)
@@ -110,8 +105,7 @@ namespace ChatClient
             {
                 if (ContactsMessageHistory.Keys.FirstOrDefault(u => u.Id == message.Sender.Id) == null)
                 {
-                    List<Message> newHistory = new List<Message>();
-                    newHistory.Add(message);
+                    List<Message> newHistory = new List<Message> {message};
                     ContactsMessageHistory.Add(message.Sender, newHistory);
                 }
                 else
@@ -122,10 +116,10 @@ namespace ChatClient
             }
         }
 
-        private Dictionary<ChatUser, List<Message>> GetAllMessageHistoryFromServer()
+        private Dictionary<ClientUser, List<Message>> GetAllMessageHistoryFromServer()
         {
-            Dictionary<ChatUser, List<Message>> messageHistoryDict = new Dictionary<ChatUser, List<Message>>();
-            List<ChatUser> contactsList = _serverService.GetChatList(CurrentUser.Id).ToList();
+            Dictionary<ClientUser, List<Message>> messageHistoryDict = new Dictionary<ClientUser, List<Message>>();
+            List<ClientUser> contactsList = _serverService.GetChatList(CurrentUser.Id).ToList();
 
             foreach (var contact in contactsList)
             {

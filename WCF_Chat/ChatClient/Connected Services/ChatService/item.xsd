@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:complexType name="Message">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="MessageText" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="Receiver" nillable="true" type="tns:ChatUser" />
-      <xs:element minOccurs="0" name="SendTime" type="xs:dateTime" />
-      <xs:element minOccurs="0" name="Sender" nillable="true" type="tns:ChatUser" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="Message" nillable="true" type="tns:Message" />
-  <xs:complexType name="ChatUser">
+  <xs:complexType name="ClientUser">
     <xs:sequence>
       <xs:element minOccurs="0" name="Id" type="xs:int" />
       <xs:element minOccurs="0" name="UserName" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
-  <xs:element name="ChatUser" nillable="true" type="tns:ChatUser" />
+  <xs:element name="ClientUser" nillable="true" type="tns:ClientUser" />
+  <xs:complexType name="Message">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="MessageText" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Receiver" nillable="true" type="tns:ClientUser" />
+      <xs:element minOccurs="0" name="SendTime" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Sender" nillable="true" type="tns:ClientUser" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Message" nillable="true" type="tns:Message" />
   <xs:complexType name="ArrayOfMessage">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="Message" nillable="true" type="tns:Message" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ArrayOfMessage" nillable="true" type="tns:ArrayOfMessage" />
-  <xs:complexType name="ArrayOfChatUser">
+  <xs:complexType name="ArrayOfClientUser">
     <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="ChatUser" nillable="true" type="tns:ChatUser" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ClientUser" nillable="true" type="tns:ClientUser" />
     </xs:sequence>
   </xs:complexType>
-  <xs:element name="ArrayOfChatUser" nillable="true" type="tns:ArrayOfChatUser" />
+  <xs:element name="ArrayOfClientUser" nillable="true" type="tns:ArrayOfClientUser" />
 </xs:schema>

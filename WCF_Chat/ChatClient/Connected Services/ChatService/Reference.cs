@@ -15,102 +15,9 @@ namespace ChatClient.ChatService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Message", Namespace="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ClientUser", Namespace="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities")]
     [System.SerializableAttribute()]
-    public partial class Message : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string MessageTextField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ChatClient.ChatService.ChatUser ReceiverField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.DateTime SendTimeField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ChatClient.ChatService.ChatUser SenderField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string MessageText {
-            get {
-                return this.MessageTextField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.MessageTextField, value) != true)) {
-                    this.MessageTextField = value;
-                    this.RaisePropertyChanged("MessageText");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChatClient.ChatService.ChatUser Receiver {
-            get {
-                return this.ReceiverField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ReceiverField, value) != true)) {
-                    this.ReceiverField = value;
-                    this.RaisePropertyChanged("Receiver");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.DateTime SendTime {
-            get {
-                return this.SendTimeField;
-            }
-            set {
-                if ((this.SendTimeField.Equals(value) != true)) {
-                    this.SendTimeField = value;
-                    this.RaisePropertyChanged("SendTime");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChatClient.ChatService.ChatUser Sender {
-            get {
-                return this.SenderField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.SenderField, value) != true)) {
-                    this.SenderField = value;
-                    this.RaisePropertyChanged("Sender");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ChatUser", Namespace="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities")]
-    [System.SerializableAttribute()]
-    public partial class ChatUser : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class ClientUser : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -167,15 +74,108 @@ namespace ChatClient.ChatService {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Message", Namespace="http://schemas.datacontract.org/2004/07/WCF_Chat.Entities")]
+    [System.SerializableAttribute()]
+    public partial class Message : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string MessageTextField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ChatClient.ChatService.ClientUser ReceiverField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime SendTimeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ChatClient.ChatService.ClientUser SenderField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string MessageText {
+            get {
+                return this.MessageTextField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.MessageTextField, value) != true)) {
+                    this.MessageTextField = value;
+                    this.RaisePropertyChanged("MessageText");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ChatClient.ChatService.ClientUser Receiver {
+            get {
+                return this.ReceiverField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ReceiverField, value) != true)) {
+                    this.ReceiverField = value;
+                    this.RaisePropertyChanged("Receiver");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime SendTime {
+            get {
+                return this.SendTimeField;
+            }
+            set {
+                if ((this.SendTimeField.Equals(value) != true)) {
+                    this.SendTimeField = value;
+                    this.RaisePropertyChanged("SendTime");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ChatClient.ChatService.ClientUser Sender {
+            get {
+                return this.SenderField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SenderField, value) != true)) {
+                    this.SenderField = value;
+                    this.RaisePropertyChanged("Sender");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ChatService.IChatService", CallbackContract=typeof(ChatClient.ChatService.IChatServiceCallback))]
     public interface IChatService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/LogIn", ReplyAction="http://tempuri.org/IChatService/LogInResponse")]
-        int LogIn(string userName, string password, bool registrationRequired);
+        ChatClient.ChatService.ClientUser LogIn(string userName, string password, bool registrationRequired);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/LogIn", ReplyAction="http://tempuri.org/IChatService/LogInResponse")]
-        System.Threading.Tasks.Task<int> LogInAsync(string userName, string password, bool registrationRequired);
+        System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser> LogInAsync(string userName, string password, bool registrationRequired);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/LogOff", ReplyAction="http://tempuri.org/IChatService/LogOffResponse")]
         void LogOff(int id);
@@ -190,10 +190,10 @@ namespace ChatClient.ChatService {
         System.Threading.Tasks.Task SendMessageAsync(ChatClient.ChatService.Message message);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/AddToChatList", ReplyAction="http://tempuri.org/IChatService/AddToChatListResponse")]
-        ChatClient.ChatService.ChatUser AddToChatList(int forId, string userName);
+        ChatClient.ChatService.ClientUser AddToChatList(int forId, string userName);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/AddToChatList", ReplyAction="http://tempuri.org/IChatService/AddToChatListResponse")]
-        System.Threading.Tasks.Task<ChatClient.ChatService.ChatUser> AddToChatListAsync(int forId, string userName);
+        System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser> AddToChatListAsync(int forId, string userName);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/DeleteFromChatList", ReplyAction="http://tempuri.org/IChatService/DeleteFromChatListResponse")]
         int DeleteFromChatList(int forId, string userName);
@@ -208,10 +208,10 @@ namespace ChatClient.ChatService {
         System.Threading.Tasks.Task<ChatClient.ChatService.Message[]> GetMessagesHistoryAsync(int forId, int withId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/GetChatList", ReplyAction="http://tempuri.org/IChatService/GetChatListResponse")]
-        ChatClient.ChatService.ChatUser[] GetChatList(int forId);
+        ChatClient.ChatService.ClientUser[] GetChatList(int forId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatService/GetChatList", ReplyAction="http://tempuri.org/IChatService/GetChatListResponse")]
-        System.Threading.Tasks.Task<ChatClient.ChatService.ChatUser[]> GetChatListAsync(int forId);
+        System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser[]> GetChatListAsync(int forId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -249,11 +249,11 @@ namespace ChatClient.ChatService {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public int LogIn(string userName, string password, bool registrationRequired) {
+        public ChatClient.ChatService.ClientUser LogIn(string userName, string password, bool registrationRequired) {
             return base.Channel.LogIn(userName, password, registrationRequired);
         }
         
-        public System.Threading.Tasks.Task<int> LogInAsync(string userName, string password, bool registrationRequired) {
+        public System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser> LogInAsync(string userName, string password, bool registrationRequired) {
             return base.Channel.LogInAsync(userName, password, registrationRequired);
         }
         
@@ -273,11 +273,11 @@ namespace ChatClient.ChatService {
             return base.Channel.SendMessageAsync(message);
         }
         
-        public ChatClient.ChatService.ChatUser AddToChatList(int forId, string userName) {
+        public ChatClient.ChatService.ClientUser AddToChatList(int forId, string userName) {
             return base.Channel.AddToChatList(forId, userName);
         }
         
-        public System.Threading.Tasks.Task<ChatClient.ChatService.ChatUser> AddToChatListAsync(int forId, string userName) {
+        public System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser> AddToChatListAsync(int forId, string userName) {
             return base.Channel.AddToChatListAsync(forId, userName);
         }
         
@@ -297,11 +297,11 @@ namespace ChatClient.ChatService {
             return base.Channel.GetMessagesHistoryAsync(forId, withId);
         }
         
-        public ChatClient.ChatService.ChatUser[] GetChatList(int forId) {
+        public ChatClient.ChatService.ClientUser[] GetChatList(int forId) {
             return base.Channel.GetChatList(forId);
         }
         
-        public System.Threading.Tasks.Task<ChatClient.ChatService.ChatUser[]> GetChatListAsync(int forId) {
+        public System.Threading.Tasks.Task<ChatClient.ChatService.ClientUser[]> GetChatListAsync(int forId) {
             return base.Channel.GetChatListAsync(forId);
         }
     }

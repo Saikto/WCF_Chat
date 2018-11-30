@@ -7,10 +7,10 @@ namespace WCF_Chat.Entities
     public class Message
     {
         [DataMember]
-        public ChatUser Sender { get; set; }
+        public ClientUser Sender { get; set; }
 
         [DataMember]
-        public ChatUser Receiver { get; set; }
+        public ClientUser Receiver { get; set; }
 
         [DataMember]
         public DateTime SendTime { get; set; }

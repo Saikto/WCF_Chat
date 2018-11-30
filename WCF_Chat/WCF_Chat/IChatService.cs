@@ -8,7 +8,7 @@ namespace WCF_Chat
     public interface IChatService
     {
         [OperationContract]
-        int LogIn(string userName, string password, bool registrationRequired);
+        ClientUser LogIn(string userName, string password, bool registrationRequired);
 
         [OperationContract]
         void LogOff(int id);
@@ -17,7 +17,7 @@ namespace WCF_Chat
         void SendMessage(Message message);
 
         [OperationContract]
-        ChatUser AddToChatList(int forId, string userName);
+        ClientUser AddToChatList(int forId, string userName);
 
         [OperationContract]
         int DeleteFromChatList(int forId, string userName);
@@ -26,6 +26,6 @@ namespace WCF_Chat
         List<Message> GetMessagesHistory(int forId, int withId);
 
         [OperationContract]
-        List<ChatUser> GetChatList(int forId);
+        List<ClientUser> GetChatList(int forId);
     }
 }

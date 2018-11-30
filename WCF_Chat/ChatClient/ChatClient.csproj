@@ -57,7 +57,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Exceptions\ServerDidNotRespondException.cs" />
     <Compile Include="LoginValidator.cs" />
     <Compile Include="Utility\StorageHandler.cs" />
     <Page Include="LoginWindow.xaml">
@@ -78,9 +77,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <Compile Include="Exceptions\UserAlreadyExistException.cs" />
-    <Compile Include="Exceptions\UserNotRegisteredException.cs" />
-    <Compile Include="Exceptions\WrongUserPasswordException.cs" />
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
@@ -107,7 +103,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Connected Services\ChatService\ChatClient.ChatService.ChatUser.datasource">
+    <None Include="Connected Services\ChatService\ChatClient.ChatService.ClientUser.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Connected Services\ChatService\ChatClient.ChatService.Message.datasource">

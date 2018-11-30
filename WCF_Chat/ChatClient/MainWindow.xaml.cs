@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
@@ -13,8 +14,8 @@ namespace ChatClient
     {
         private readonly LoginWindow _loginWindow;
         private readonly ClientService _clientService;
-        private ChatUser _selectedChatContact;
-        public List<ChatUser> ChatContactsList;
+        private ClientUser _selectedChatContact;
+        public List<ClientUser> ChatContactsList;
         
         private bool _showContactSearch = false;
 
@@ -103,7 +104,7 @@ namespace ChatClient
                     _clientService.AddToChatList(contactToAdd);
 
                 }
-                catch (Exception exception)
+                catch (FaultException exception)
                 {
                     MessageBox.Show(exception.Message);
                     return;
@@ -120,7 +121,7 @@ namespace ChatClient
 
         private void BtnDeleteContact_Click(object sender, RoutedEventArgs e)
         {
-            ChatUser contactToDelete = _selectedChatContact;
+            ClientUser contactToDelete = _selectedChatContact;
             if (contactToDelete != null)
             {
                 try
@@ -158,7 +159,7 @@ namespace ChatClient
             }
         }
 
-        private ChatUser GetSelectedChatUserFromContactsLb()
+        private ClientUser GetSelectedChatUserFromContactsLb()
         {
             var selectedContact = LbContactsList.SelectedItems.Cast<string>().ToList().FirstOrDefault();
             if (selectedContact != null)

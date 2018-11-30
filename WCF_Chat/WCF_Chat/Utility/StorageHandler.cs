@@ -34,12 +34,12 @@ namespace WCF_Chat.Utility
         /// <summary>
         /// Gets next available user id (reads last used ID from users.txt and returns next int number). First Id == 1
         /// </summary>
-        public static int GenerateUserId()
+        public static int GetNextUserId()
         {
             int previousId;
-            if (GetRegisteredUsers().Keys.Count > 0)
+            if (GetRegisteredUsers().Count > 0)
             {
-                previousId = GetRegisteredUsers().Keys.Last();
+                previousId = GetRegisteredUsers().Last().Id;
                 previousId++;
                 return previousId;
             }
@@ -49,14 +49,14 @@ namespace WCF_Chat.Utility
         /// <summary>
         /// Verifies if user with such user name present in users.txt (means registered)
         /// </summary>
-        public static bool DoesUserNameExists(string userName)
+        public static bool UserNameExists(string userName)
         {
-            return GetRegisteredUsers().Values.Contains(userName);
+            return GetRegisteredUsers().FirstOrDefault(u => u.UserName == userName) != null;
         }
 
         public static int GetUserIdByUserName(string userName)
         {
-            return GetRegisteredUsers().FirstOrDefault(u => u.Value == userName).Key;
+            return GetRegisteredUsers().FirstOrDefault(u => u.UserName == userName).Id;
         }
 
         /// <summary>
@@ -87,17 +87,17 @@ namespace WCF_Chat.Utility
         /// <summary>
         /// Reads list of all registered users (id username) from FileInfo of users.txt file from account storage
         /// </summary>
-        public static Dictionary<int, string> GetRegisteredUsers()
+        public static List<ClientUser> GetRegisteredUsers()
         {
-            Dictionary<int, string> usersWithIds = new Dictionary<int, string>();
+            List<ClientUser> users = new List<ClientUser>();
 
             foreach (var userLine in File.ReadAllLines(_registeredUsersFileInfo.FullName))
             {
                 var array = userLine.Split(' ');
-                usersWithIds.Add(Int32.Parse(array[0]), array[1]);
+                users.Add(new ClientUser(int.Parse(array[0]), array[1]));
             }
 
-            return usersWithIds;
+            return users;
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace WCF_Chat.Utility
                     messagesList.Add(new Message()
                     {
                         SendTime = DateTime.Parse(messagesElement.FirstAttribute.Value),
-                        Sender = new ChatUser { UserName = messagesElement.LastAttribute.Value },
+                        Sender = new ClientUser { UserName = messagesElement.LastAttribute.Value },
                         MessageText = messagesElement.Value
                     });
 
@@ -212,9 +212,9 @@ namespace WCF_Chat.Utility
         /// <summary>
         /// 
         /// </summary>
-        public static List<ChatUser> GetContactsListFromFile(int forId)
+        public static List<ClientUser> GetContactsListFromFile(int forId)
         {
-            List<ChatUser> contactsList = new List<ChatUser>();
+            List<ClientUser> contactsList = new List<ClientUser>();
             FileInfo contactsFile = GetUserFiles(forId).FirstOrDefault(x => x.Name == "chatContacts.xml");
 
             if (contactsFile != null)
@@ -223,7 +223,7 @@ namespace WCF_Chat.Utility
                 List<XElement> contactElements = contactsDoc.Descendants("contact").ToList();
                 foreach (var contactElement in contactElements)
                 {
-                    contactsList.Add(new ChatUser
+                    contactsList.Add(new ClientUser
                     {
                         Id = Int32.Parse(contactElement.FirstAttribute.Value),
                         UserName = contactElement.LastAttribute.Value

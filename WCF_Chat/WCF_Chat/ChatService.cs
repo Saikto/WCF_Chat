@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Channels;
-using System.Security.Cryptography;
 using System.ServiceModel;
-using System.Text;
+using ChatClient.Exceptions;
 using WCF_Chat.Entities;
 using WCF_Chat.Utility;
 
@@ -15,8 +12,8 @@ namespace WCF_Chat
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class ChatService : IChatService
     {
-        private readonly List<ChatUser> _onlineUsersList = new List<ChatUser>();
-        private readonly Dictionary<int, string> _registeredUsers;
+        private readonly List<ServerUser> _onlineUsersList = new List<ServerUser>();
+        private readonly List<ClientUser> _registeredUsers;
         private StorageHandler _storageHandler;
 
         ChatService()
@@ -29,30 +26,47 @@ namespace WCF_Chat
         /// Logs in or registers new user on server side. 
         /// </summary>
         /// <returns> Connected user ID if success. Else returns error code.</returns>
-        public int LogIn(string userName, string password, bool registrationRequired)
+        public ClientUser LogIn(string userName, string password, bool registrationRequired)
         {
-            var resultCode = registrationRequired ? RegisterNewUser(userName, password) : ValidateUserLogin(userName, password);
-
-            if (resultCode > 0)
+            ClientUser user;
+            try
             {
-                var userToConnect = new ChatUser()
-                {
-                    Id = resultCode,
-                    UserName = userName,
-                    OperationContext = OperationContext.Current
-                };
-
-                if (_onlineUsersList.FirstOrDefault(u => u.Id == userToConnect.Id) == null)
-                {
-                    _onlineUsersList.Add(userToConnect);
-                    userToConnect.OperationContext.Channel.Faulted += (sender, e) => LogOff(userToConnect.Id);
-                }
-
-                Console.WriteLine($"{DateTime.Now}: User {userName} online.");
-                Console.WriteLine($"{DateTime.Now}: Users online count: {_onlineUsersList.Count}.");
-                return resultCode;
+                user = registrationRequired
+                    ? RegisterNewUser(userName, password)
+                    : ValidateUserLogin(userName, password);
             }
-            return resultCode;
+            catch (UserAlreadyExistException e)
+            {
+                throw new FaultException(e.Message);
+            }
+            catch (UserNotRegisteredException e)
+            {
+                throw new FaultException(e.Message);
+            }
+            catch (WrongUserPasswordException e)
+            {
+                throw new FaultException(e.Message);
+            }
+
+
+            var userToConnect = new ServerUser()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                OperationContext = OperationContext.Current
+            };
+
+            if (_onlineUsersList.FirstOrDefault(u => u.Id == userToConnect.Id) == null)
+            {
+                _onlineUsersList.Add(userToConnect);
+                userToConnect.OperationContext.Channel.Faulted += (sender, e) => LogOff(userToConnect.Id);
+                userToConnect.OperationContext.Channel.Closed += (sender, e) => LogOff(userToConnect.Id);
+            }
+
+            Console.WriteLine($"{DateTime.Now}: User {userName} online.");
+            Console.WriteLine($"{DateTime.Now}: Users online count: {_onlineUsersList.Count}.");
+
+            return user;
         }
 
         public void LogOff(int id)
@@ -70,7 +84,7 @@ namespace WCF_Chat
         {
             foreach (var user in _registeredUsers)
             {
-                if (user.Key.Equals(message.Receiver.Id))
+                if (user.Equals(message.Receiver))
                 {
                     try
                     {
@@ -92,20 +106,22 @@ namespace WCF_Chat
             
         }
 
-        public ChatUser AddToChatList(int forId, string userName)
+        public ClientUser AddToChatList(int forId, string userName)
         {
-            ChatUser contact = FindUserByName(userName);
+            ClientUser contact = FindUserByName(userName);
 
-            if (contact != null)
+            if (contact == null)
             {
-                try
-                {
-                    StorageHandler.AddChatContactToFile(forId, contact.Id, contact.UserName);
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
+                throw new FaultException($"Account with user name '{userName}' is not registered. Please try again.");
+            }
+
+            try
+            {
+                StorageHandler.AddChatContactToFile(forId, contact.Id, contact.UserName);
+            }
+            catch (Exception)
+            {
+                throw new FaultException("Unknown error. Please try again.");
             }
 
             return contact;
@@ -130,32 +146,29 @@ namespace WCF_Chat
             return StorageHandler.GetMessagesHistory(forId, withId);
         }
 
-        public List<ChatUser> GetChatList(int forId)
+        public List<ClientUser> GetChatList(int forId)
         {
             return StorageHandler.GetContactsListFromFile(forId);
         }
 
-        private ChatUser FindUserByName(string userName)
+        private ClientUser FindUserByName(string userName)
         {
-            try
-            {
-                var found = _registeredUsers.First(c => c.Value == userName);
-                var id = found.Key;
-                return new ChatUser { Id = id, UserName = userName };
-            }
-            catch (InvalidOperationException)
-            {
-                return null;
-            }
+            return _registeredUsers.FirstOrDefault(u => u.UserName == userName);
         }
 
-        private int RegisterNewUser(string userName, string password)
+        private ClientUser RegisterNewUser(string userName, string password)
         {
-            if (StorageHandler.DoesUserNameExists(userName))
-                return -2;
+            if (StorageHandler.UserNameExists(userName))
+            {
+                throw new UserAlreadyExistException(
+                    $"Account with user name '{userName}' already exists. Please enter another user name and try again.");
+            }
 
-            int userId = StorageHandler.GenerateUserId();
-            _registeredUsers.Add(userId, userName);
+            int userId = StorageHandler.GetNextUserId();
+
+            ClientUser newUser = new ClientUser(userId, userName);
+            _registeredUsers.Add(newUser);
+
             StorageHandler.AddToRegisteredUsersFile(userId, userName);
             StorageHandler.CreateUserFilesInStorage(userId);
             var passwordFile = StorageHandler.GetPasswordFile(userId);
@@ -171,14 +184,14 @@ namespace WCF_Chat
 
             //    fStream.Flush();
             //}
-            return userId;
+            return newUser;
         }
 
-        private int ValidateUserLogin(string userName, string password)
+        private ClientUser ValidateUserLogin(string userName, string password)
         {
-            if (!StorageHandler.DoesUserNameExists(userName))
+            if (!StorageHandler.UserNameExists(userName))
             {
-                return -1;
+                throw new UserNotRegisteredException($"Account with user name '{userName}' is not registered. Please check if you entered correct user name for your account or choose option 'Registration required' to create new account.");
             }
 
             int userId = StorageHandler.GetUserIdByUserName(userName);
@@ -190,10 +203,10 @@ namespace WCF_Chat
 
             if (passwordCorrect)
             {
-                return _registeredUsers.First(u => u.Value == userName).Key;
+                return _registeredUsers.First(u => u.UserName == userName);
             }
 
-            return 0;
+            throw new WrongUserPasswordException($"You entered wrong password for account with user name '{userName}'. Please try again.");
         }
     }
 }
