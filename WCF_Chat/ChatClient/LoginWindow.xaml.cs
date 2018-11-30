@@ -7,7 +7,7 @@ namespace ChatClient
 {
     public partial class LoginWindow : Window
     {
-        private readonly ClientService _clientService = new ClientService();
+        private ClientService _clientService;
 
         public LoginWindow()
         {
@@ -17,7 +17,7 @@ namespace ChatClient
         private void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
             var userName = TbUserName.Text;
-            var password = TbPassword.Text;
+            var password = PbPassword.Password;
             var registrationRequired = CheckBoxRegistration.IsChecked == true;
 
             //Validate correctness of login credentials
@@ -32,15 +32,15 @@ namespace ChatClient
             }
 
             //Connects user if everything is OK
+            _clientService = new ClientService();
             _clientService.FaultExceptionThrown += FaultExceptionOccured;
             _clientService.ConnectUser(userName, password, registrationRequired);
+            _clientService.FaultExceptionThrown -= FaultExceptionOccured;
 
             if (_clientService.CurrentUser == null)
             {
-                _clientService.FaultExceptionThrown -= FaultExceptionOccured;
                 return;
             }
-
             //Creates main window instance and shows it
             MainWindow mainWindow = new MainWindow(_clientService, this);
             mainWindow.Title += $" - {userName}";

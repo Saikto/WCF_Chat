@@ -7,12 +7,12 @@ namespace ChatUnitTests
     [TestClass]
     public class LoginValidatorTests
     {
-        private string _exMessageEmptyInput = "You have to type your user name and password to log in!";
-        private string _exMessageShortUsername = "User name is too short. It has to contain at least two symbols.";
-        private string _exMessageLongUsername = "User name is too long. It can't contain more than 20 symbols.";
-        private string _exMessageRestrictedSymbol = "User name contains restricted symbols. It can contain only numbers, symbols of Russian/English alphabet and symbols '_' and '.'";
-        private string _exMessageShortPassword = "Password is too short. It has to contain at least 8 symbols.";
-        private string _exMessageLongPassword = "Password is too long. It can't contain more than 30 symbols.";
+        private readonly string _exMessageEmptyInput = "You have to type your user name and password to log in!";
+        private readonly string _exMessageShortUsername = "User name is too short. It has to contain at least two symbols.";
+        private readonly string _exMessageLongUsername = "User name is too long. It can't contain more than 20 symbols.";
+        private readonly string _exMessageRestrictedSymbol = "User name contains restricted symbols. It can contain only numbers, symbols of Russian/English alphabet and symbols '_' and '.'";
+        private readonly string _exMessageShortPassword = "Password is too short. It has to contain at least 8 symbols.";
+        private readonly string _exMessageLongPassword = "Password is too long. It can't contain more than 30 symbols.";
 
         [TestMethod]
         public void EmptyUsernameStr()

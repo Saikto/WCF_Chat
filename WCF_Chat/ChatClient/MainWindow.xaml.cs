@@ -65,7 +65,7 @@ namespace ChatClient
         {
             _clientService.DisconnectUser();
 
-            _loginWindow.TbPassword.Text = string.Empty;
+            _loginWindow.PbPassword.Password = string.Empty;
             _loginWindow.CheckBoxRegistration.IsChecked = false;
             _loginWindow.Show();
             Hide();
